@@ -7,20 +7,45 @@ An interactive, offline mind map for studying **any topic**. All content is stor
 ## Project Structure
 
 ```
-studymind/
-├── index.html          # The interactive mind map (open this in a browser)
-├── build.py            # Build script — converts data.json → data.js
-└── data/
-    ├── data.json       # All mind map content lives here — edit this file
-    └── data.js         # Auto-generated — DO NOT edit manually
+maven-mindmap/
+├── template.html         # Jinja2 template — do not open directly
+├── build.py              # Multi-map generator
+├── requirements.txt      # Python dependencies
+├── .gitignore
+├── data/
+│   └── <folder>/
+│       └── <name>.json   # Source content — edit this file
+├── dist/                 # Generated output — tracked in git
+│   └── <folder>/
+│       └── <name>.html   # Open this in a browser
+└── venv/                 # Local Python venv — gitignored (not tracked)
 ```
+
+---
+
+## Setup
+
+### 1. Create the virtual environment
+
+```bash
+py -m venv venv
+venv\Scripts\pip install -r requirements.txt
+```
+
+### 2. Build a mindmap
+
+```bash
+venv\Scripts\python build.py --folder maven
+```
+
+Then open `dist/maven/maven.html` in your browser.
 
 ---
 
 ## How to Use the Mind Map
 
-1. Open `index.html` in any modern browser (Chrome, Edge, Firefox).
-2. No server or internet connection is needed after the first load (fonts are from Google Fonts CDN).
+1. Open any generated `.html` from `dist/<folder>/` in any modern browser (Chrome, Edge, Firefox).
+2. No server or internet connection is needed — the file is fully self-contained (all data is inlined at build time).
 
 ### Navigation
 
@@ -92,9 +117,9 @@ Click the **✦ Drag Mode** button in the toolbar to switch to **Select Mode** i
 
 ## How to Edit Content
 
-All mind map content is in `data/data.json`. After every edit, run the build script to regenerate `data/data.js`, then refresh `index.html` in the browser.
+Each mindmap is a JSON file inside `data/<folder>/`. Create as many folders and JSON files as you need — one JSON file per mindmap. After every edit, run the build script to write the updated HTML to `dist/`, then open or refresh it in the browser.
 
-### Step 1 — Edit `data/data.json`
+### Step 1 — Edit your JSON file
 
 The file has two top-level keys: `meta` and `root`.
 
@@ -248,22 +273,39 @@ Notes:
 
 ### Step 3 — Run the build script
 
-Requires Python 3 (no extra packages needed).
+Requires Python 3 and Jinja2. Use the project venv (see [Setup](#setup)).
 
 ```bash
-# From inside the project folder:
-py build.py
+# Build all JSON files in a folder:
+venv\Scripts\python build.py --folder maven
+
+# Build specific files only:
+venv\Scripts\python build.py --folder maven --files intro,deep-dive
+
+# Build every JSON in every folder in parallel:
+venv\Scripts\python build.py --all
 ```
+
+| Flag | Description |
+|---|---|
+| `--folder <name>` | Folder inside `data/` to build |
+| `--files <a>,<b>` | Comma-separated JSON stems (requires `--folder`) |
+| `--all` | Build every JSON in every folder |
+| `--out <dir>` | Output root directory (default: `dist`) |
 
 Expected output:
 
 ```
-Done! Built data\data.js  (10 top-level topics, 27 explanations, 5 quizzes, 7 glossary terms)
+Building 1 map(s) → dist/
+
+  ✓ dist\maven\maven.html
+
+Built 1 map(s) in 0.01s
 ```
 
-### Step 4 — Refresh the browser
+### Step 4 — Open the generated file
 
-Press `Ctrl+R` (or `Cmd+R`) in the browser tab showing `index.html`. Your changes appear immediately.
+Open `dist/<folder>/<name>.html` in any browser. The file is fully self-contained — open it directly from the file system, no server needed.
 
 ---
 
@@ -271,26 +313,28 @@ Press `Ctrl+R` (or `Cmd+R`) in the browser tab showing `index.html`. Your change
 
 ### Add a new leaf bullet point
 
-1. Open `data/data.json`.
+1. Open the relevant `data/<folder>/<name>.json`.
 2. Find the parent node by its `"text"` value.
 3. Add `{ "text": "Your new bullet" }` to its `"children"` array.
-4. Run `py build.py` and refresh.
+4. Run `venv\Scripts\python build.py --folder <folder>` and refresh.
 
 ### Add a new section with sub-topics
 
 1. Add a new object with `"text"` and `"children"` inside the relevant parent's `"children"` array.
 2. Optionally add an `"explanation"` to enable the detail panel.
-3. Run `py build.py` and refresh.
+3. Run `venv\Scripts\python build.py --folder <folder>` and refresh.
 
 ### Extend an existing explanation
 
-1. Find the node by its `"text"` in `data/data.json`.
+1. Find the node by its `"text"` in the relevant JSON file.
 2. Edit or add fields inside its `"explanation"` object.
-3. Run `py build.py` and refresh.
+3. Run `venv\Scripts\python build.py --folder <folder>` and refresh.
 
-### Change the topic covered entirely
+### Add a new mindmap
 
-Replace the content of `data/data.json` with a new structure following the same schema. Update `meta.title` and `meta.subtitle` to match. Run `py build.py` and refresh.
+1. Create a JSON file in any `data/<folder>/` directory (e.g. `data/java/collections.json`).
+2. Give it the same schema as an existing file — `meta`, `root`, and optionally `glossary`.
+3. Run `venv\Scripts\python build.py --folder java` to generate `dist/java/collections.html`.
 
 ---
 
@@ -298,32 +342,37 @@ Replace the content of `data/data.json` with a new structure following the same 
 
 | Requirement | Details |
 |---|---|
-| Python | 3.7 or later (standard library only) |
+| Python | 3.7 or later |
+| Jinja2 | ≥ 3.0 (see `requirements.txt`) |
 | Browser | Chrome 90+, Edge 90+, Firefox 88+ |
-| Internet | Only for Google Fonts on first load |
+| Internet | Only for CDN libraries on first load |
 
 ---
 
 ## File Reference
 
-### `data/data.json` — content source
+### `data/<folder>/<name>.json` — content source
 
-The single file you need to edit. Controls every node label, every child relationship, and every detail dialog. The build script reads nothing else.
+The files you edit. Each JSON file becomes one mindmap. Organize by topic folder (e.g. `data/maven/intro.json`, `data/java/core.json`). Controls every node label, child relationship, explanation, quiz, and glossary entry.
 
-### `build.py` — build script
+### `build.py` — multi-map generator
 
-Reads `data/data.json` and writes `data/data.js`. It:
+Reads JSON files from `data/` and writes self-contained HTML files to `dist/`. It:
 - Converts the `{text, children}` tree into markmap's `{content, children, payload}` format.
 - Sets all nodes beyond depth 0 to start folded (`payload.fold = 1`).
 - Collects all `explanation` objects into a flat `APP_EXPLANATIONS` lookup keyed by node text.
 - Collects all `quiz` objects into a flat `APP_QUIZZES` lookup keyed by node text.
 - Emits the top-level `glossary` map as `APP_GLOSSARY` (empty object if omitted).
+- Inlines all five JS globals into the HTML via Jinja2 — no external data file needed.
+- Uses `ThreadPoolExecutor` for parallel builds when processing multiple files.
 
-Run it every time you change `data.json`.
+Run it every time you change a JSON file. See [Step 3](#step-3--run-the-build-script) for CLI usage.
 
-### `data/data.js` — auto-generated
+### `template.html` — Jinja2 template
 
-Do not edit this file directly. It is overwritten every time `build.py` runs. Contains five JavaScript globals used by `index.html`:
+The application shell containing all HTML, CSS, and JavaScript for the interactive mindmap. Do not open this file directly in a browser — it contains an unresolved `{{ data_script | safe }}` placeholder. Only edit it if you need to change the UI, color theme, or application behavior.
+
+The five JS globals injected at build time are:
 
 - `APP_META` — header metadata (including `quizDefaultCount`)
 - `APP_ROOT` — the full node tree in markmap format
@@ -331,13 +380,9 @@ Do not edit this file directly. It is overwritten every time `build.py` runs. Co
 - `APP_QUIZZES` — flat lookup of node text → quiz object
 - `APP_GLOSSARY` — flat lookup of glossary term → definition string
 
-### `index.html` — the application
-
-Self-contained HTML file. Loads D3, markmap-view, jsPDF, and html2canvas from CDN, then loads `data/data.js` as a local script. All styling, search logic, dialog rendering, the node action menu (FAB), the quiz engine, D3 charts, and PDF export live here. Only edit this file if you need to change the UI, color theme, or application behavior.
-
 #### Adding a new node action icon
 
-Node icons (i, t) are driven by a single registry, `NODE_ACTIONS`, in the inline script of `index.html`. To add a new icon to the **+** menu, add one entry:
+Node icons (i, t) are driven by a single registry, `NODE_ACTIONS`, in the inline script of `template.html`. To add a new icon to the **+** menu, add one entry:
 
 ```javascript
 const NODE_ACTIONS = [

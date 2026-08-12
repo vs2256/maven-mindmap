@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maven Reference Audit — StudyMind</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --parchment:   #f5edd6;
+  --parchment-2: #ede0c4;
+  --parchment-3: #e2d0a8;
+  --leather:     #2c1a0e;
+  --leather-3:   #5c3a1e;
+  --gold:        #b8860b;
+  --gold-light:  #d4a843;
+  --ink:         #1e0f06;
+  --ink-2:       #3d2b1f;
+  --sepia:       #7a5c3a;
+  --rust:        #8b3a2f;
+  --green:       #4a7c3a;
+  --cream-border:#c9a86a;
+  --shadow:      0 2px 12px rgba(44,26,14,0.18);
+}
+* , *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'EB Garamond', Georgia, serif;
+  background: var(--parchment);
+  color: var(--ink);
+  line-height: 1.65;
+  padding: 0 0 60px;
+}
+.wrap { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+header {
+  background: linear-gradient(135deg, #1e0c04 0%, #2c1a0e 40%, #3d2314 70%, #2c1a0e 100%);
+  border-bottom: 3px solid var(--gold);
+  padding: 34px 0 30px;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+  margin-bottom: 34px;
+}
+header .wrap { display: flex; align-items: center; gap: 18px; }
+.emblem {
+  width: 56px; height: 56px; flex-shrink: 0;
+  border: 2px solid var(--gold); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 800;
+  color: var(--gold-light); background: rgba(180,130,20,0.12);
+  box-shadow: 0 0 8px rgba(180,130,20,0.3), inset 0 0 6px rgba(180,130,20,0.1);
+}
+header h1 {
+  font-family: 'Playfair Display', serif; color: var(--gold-light);
+  font-size: 26px; font-weight: 700; letter-spacing: 0.4px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+header .sub {
+  color: rgba(212,168,67,0.65); font-style: italic; font-size: 14px; margin-top: 3px;
+}
+
+h2 {
+  font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700;
+  color: var(--leather); margin: 38px 0 14px;
+  border-bottom: 2px solid var(--cream-border); padding-bottom: 6px;
+}
+h3 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--leather-3); margin: 18px 0 6px; }
+p { margin: 10px 0; }
+code {
+  font-family: 'Courier New', monospace; font-size: 0.9em;
+  background: var(--parchment-2); border: 1px solid var(--parchment-3);
+  border-radius: 3px; padding: 1px 5px; color: var(--leather);
+}
+
+/* Cards */
+.card {
+  background: linear-gradient(135deg, #fdf6e3 0%, var(--parchment-2) 100%);
+  border: 1.5px solid var(--cream-border); border-radius: 5px;
+  box-shadow: var(--shadow); padding: 20px 24px; margin: 16px 0;
+}
+.summary { border-left: 5px solid var(--gold); }
+
+/* Verdict panel */
+.verdict {
+  border: 2px solid var(--rust); border-radius: 6px;
+  background: #f9efec; padding: 22px 26px; margin: 18px 0;
+  box-shadow: var(--shadow);
+}
+.verdict .tag {
+  display: inline-block; background: var(--rust); color: #fff;
+  font-family: 'Playfair Display', serif; font-weight: 700; letter-spacing: 0.06em;
+  padding: 4px 16px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 12px;
+}
+.verdict h2 { border: none; margin: 0 0 6px; color: var(--rust); }
+
+/* Stat strip */
+.stats { display: flex; flex-wrap: wrap; gap: 14px; margin: 18px 0; }
+.stat {
+  flex: 1 1 150px; text-align: center; padding: 16px 12px;
+  background: var(--parchment-2); border: 1.5px solid var(--cream-border);
+  border-radius: 6px; box-shadow: var(--shadow);
+}
+.stat .num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 800; color: var(--leather); line-height: 1; }
+.stat .lbl { font-size: 0.82rem; color: var(--sepia); font-style: italic; margin-top: 6px; }
+.stat.clear .num { color: var(--green); }
+.stat.hot .num { color: var(--rust); }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; margin: 14px 0; box-shadow: var(--shadow); }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--cream-border); font-size: 0.95rem; }
+th {
+  background: var(--leather); color: var(--gold-light);
+  font-family: 'Playfair Display', serif; font-weight: 700; letter-spacing: 0.3px;
+}
+tbody tr:nth-child(odd) { background: rgba(245,237,214,0.6); }
+tbody tr:nth-child(even) { background: rgba(237,224,196,0.6); }
+td.center { text-align: center; }
+.pill {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 0.78rem; font-weight: 600; white-space: nowrap;
+}
+.pill-clear { background: #dff0d5; color: #2f6a1a; border: 1px solid #7aaa6a; }
+.pill-doc   { background: #fdf3dc; color: #7a5000; border: 1px solid #d4a843; }
+.pill-data  { background: #f7ddd5; color: #8b3a2f; border: 1px solid #c97a6a; }
+
+/* Snippet blocks */
+.snippet {
+  background: #231810; color: #e8d5a3; border: 1.5px solid var(--leather-3);
+  border-radius: 5px; padding: 14px 16px; margin: 10px 0;
+  font-family: 'Courier New', monospace; font-size: 0.82rem; line-height: 1.6;
+  white-space: pre-wrap; overflow-x: auto;
+}
+.snippet .hl { color: #f0c060; font-weight: 700; }
+.snippet .file { display: block; color: #c9a86a; font-style: italic; margin-bottom: 6px; font-family: 'EB Garamond', serif; font-size: 0.85rem; }
+
+ul.rec { margin: 8px 0 8px 4px; list-style: none; }
+ul.rec li { padding: 6px 0 6px 26px; position: relative; }
+ul.rec li::before { content: '→'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+
+.footer-note {
+  margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--cream-border);
+  font-size: 0.85rem; color: var(--sepia); font-style: italic; text-align: center;
+}
+.badge-ok  { color: var(--green); font-weight: 700; }
+.badge-bad { color: var(--rust); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="emblem">M</div>
+    <div>
+      <h1>Maven Reference Audit</h1>
+      <div class="sub">StudyMind rebrand &mdash; where does &ldquo;Maven&rdquo; still live?</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="card summary">
+    <h2 style="margin-top:0;border:none;">Executive Summary</h2>
+    <p>The project was rebranded from a Maven-specific study tool into a generic mind-map tool called <strong>StudyMind</strong>. The <em>application shell</em> (UI, build script, variable names, branding) has been fully genericized and contains <span class="badge-ok">zero</span> Maven references.</p>
+    <p>However, the <em>shipped sample content</em> &mdash; the notes stored in the data files &mdash; is still entirely about Maven. Because the header title shown on load comes from that data, and because the notes and git history preserve the original subject, a person browsing the project <span class="badge-bad">can still tell</span> it started as a Maven-specific tool.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat clear"><div class="num">0</div><div class="lbl">refs in tool code<br>(index.html + build.py)</div></div>
+    <div class="stat"><div class="num">9</div><div class="lbl">refs in docs<br>(README.md)</div></div>
+    <div class="stat hot"><div class="num">460</div><div class="lbl">refs in data files<br>(data.json + data.js)</div></div>
+    <div class="stat hot"><div class="num">469</div><div class="lbl">total occurrences<br>project-wide</div></div>
+  </div>
+
+  <div class="verdict">
+    <span class="tag">VERDICT: YES &mdash; STILL DISCOVERABLE</span>
+    <h2>Can someone tell it was previously Maven-specific?</h2>
+    <p><strong>Yes.</strong> Even though the tool code is clean, three things give away the Maven origin to anyone opening or reading the project:</p>
+    <ul class="rec">
+      <li><strong>The on-load header</strong> reads &ldquo;Maven Interview Mind Map&rdquo; because <code>meta.title</code> in <code>data/data.json</code> is unchanged.</li>
+      <li><strong>The data files</strong> (<code>data/data.json</code> and generated <code>data/data.js</code>) are 100% Maven notes &mdash; the root node is literally <code>"Maven"</code>.</li>
+      <li><strong>Git history</strong> records the rename <code>git mv data/maven.json &rarr; data/data.json</code>, and the old filename is recoverable.</li>
+    </ul>
+    <p style="margin-bottom:0;">A developer reading only <code>index.html</code> or <code>build.py</code> would <em>not</em> know &mdash; but the moment they open the app, the README sample notes, or the data files, the Maven origin is obvious.</p>
+  </div>
+
+  <h2>File-by-file findings</h2>
+  <table>
+    <thead>
+      <tr><th>File</th><th class="center">Lines w/ &ldquo;maven&rdquo;</th><th class="center">Occurrences</th><th>Category</th><th>Note</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>index.html</code></td><td class="center">0</td><td class="center">0</td><td><span class="pill pill-clear">Cleared</span></td><td>All <code>MAVEN_*</code> &rarr; <code>APP_*</code>; branding &rarr; StudyMind.</td></tr>
+      <tr><td><code>build.py</code></td><td class="center">0</td><td class="center">0</td><td><span class="pill pill-clear">Cleared</span></td><td>Paths, output var names, and comments updated.</td></tr>
+      <tr><td><code>README.md</code></td><td class="center">8</td><td class="center">9</td><td><span class="pill pill-doc">Docs</span></td><td>Maven mentioned only as the &ldquo;bundled sample dataset&rdquo; / examples.</td></tr>
+      <tr><td><code>data/data.json</code></td><td class="center">178</td><td class="center">226</td><td><span class="pill pill-data">Content</span></td><td>The actual sample notes &mdash; source of truth.</td></tr>
+      <tr><td><code>data/data.js</code></td><td class="center">186</td><td class="center">234</td><td><span class="pill pill-data">Content</span></td><td>Auto-generated mirror of <code>data.json</code> (rebuild artifact).</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Category breakdown</h2>
+
+  <h3><span class="pill pill-clear">Cleared</span> &nbsp; Tool / branding / build</h3>
+  <p>The application code carries no Maven traces. Header title tab, emblem, footer, PDF report title and filename all say StudyMind, and every global is now <code>APP_META</code> / <code>APP_ROOT</code> / <code>APP_EXPLANATIONS</code> / <code>APP_QUIZZES</code> / <code>APP_GLOSSARY</code>.</p>
+
+  <h3><span class="pill pill-doc">Docs</span> &nbsp; Documentation</h3>
+  <p><code>README.md</code> describes StudyMind as a generic, any-topic tool and references Maven only to illustrate the example dataset (a plugin snippet, a sample quiz, and a glossary entry). These are intentional teaching examples, not tool branding.</p>
+
+  <h3><span class="pill pill-data">Content</span> &nbsp; Content / data</h3>
+  <p>This is where nearly all Maven references live (~460 occurrences). It is the sample study material and was intentionally kept. <code>data/data.js</code> is generated from <code>data/data.json</code> by <code>build.py</code>, so the two mirror each other &mdash; changing the JSON and rebuilding updates both.</p>
+
+  <h2>Representative occurrences</h2>
+
+  <div class="snippet"><span class="file">data/data.json &mdash; meta block (drives the on-load header)</span>"meta": {
+  "title": "<span class="hl">Maven</span> Interview Mind Map",
+  "subtitle": "Interview Guide &mdash; 11 Years Experience",
+  "source": "Durgasoft by Nagoor Babu",
+  ...
+}</div>
+
+  <div class="snippet"><span class="file">data/data.json &mdash; root node</span>"root": {
+  "text": "<span class="hl">Maven</span>",
+  "explanation": { "summary": "<span class="hl">Maven</span> is Apache's open-source project management and build automation tool ..." }
+}</div>
+
+  <div class="snippet"><span class="file">README.md &mdash; line 3 (frames Maven as the sample only)</span>The bundled sample dataset covers <span class="hl">Maven</span> for Java developers, but you can replace it with notes on any subject.</div>
+
+  <h2>How to fully erase the Maven origin (optional)</h2>
+  <p>If the goal is that <em>no one</em> could tell it was ever Maven-specific, the content and history must also change:</p>
+  <ul class="rec">
+    <li>Edit <code>meta.title</code>, <code>meta.subtitle</code>, <code>meta.source</code> and the root node text in <code>data/data.json</code> to a neutral subject, then run <code>py build.py</code> to regenerate <code>data/data.js</code>.</li>
+    <li>Replace the Maven sample notes (nodes, explanations, quizzes, glossary) with generic or placeholder content.</li>
+    <li>Update the Maven example references in <code>README.md</code> to a neutral example.</li>
+    <li>Rewrite / squash git history so the <code>maven.json &rarr; data.json</code> rename and prior Maven commits are no longer recoverable.</li>
+  </ul>
+  <p>If the current state is acceptable (generic tool + Maven kept as demo content), no action is needed &mdash; this report simply documents where things stand.</p>
+
+  <div class="footer-note">
+    Static audit snapshot. Counts are project-wide and case-insensitive at the time of audit; the numbers will drift if the sample content is later edited. Tool code (index.html, build.py) verified clean.
+  </div>
+
+</div>
+</body>
+</html>

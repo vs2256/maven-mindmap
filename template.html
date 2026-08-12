@@ -1140,7 +1140,7 @@ header::after {
 <script src="https://cdn.jsdelivr.net/npm/markmap-view@0.18.12/dist/browser/index.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="data/data.js"></script>
+{{ data_script | safe }}
 
 <script>
 // ── Populate header from meta ────────────────────────────────────
