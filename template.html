@@ -334,6 +334,14 @@ header::after {
   -webkit-user-select: none;
   pointer-events: none;
 }
+/* suppress scrollbar caused by custom font overflowing markmap's pre-load measurement */
+.markmap-foreign > div {
+  overflow: hidden;
+  scrollbar-width: none;
+}
+.markmap-foreign > div::-webkit-scrollbar {
+  display: none;
+}
 
 /* Select mode overrides */
 #mm-wrap.select-mode #mindmap {
@@ -357,6 +365,10 @@ header::after {
   font-size: 15px !important;
 }
 .markmap-node > circle {
+  stroke: var(--link-color) !important;
+  stroke-width: 2px !important;
+}
+.markmap-node > line {
   stroke: var(--link-color) !important;
   stroke-width: 2px !important;
 }
