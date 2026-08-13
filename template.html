@@ -337,10 +337,10 @@ header::after {
 
 /* Select mode overrides */
 #mm-wrap.select-mode #mindmap {
-  cursor: text;
+  cursor: default;
 }
 #mm-wrap.select-mode #mindmap:active {
-  cursor: text;
+  cursor: default;
 }
 #mm-wrap.select-mode .markmap-foreign,
 #mm-wrap.select-mode .markmap-foreign * {
@@ -1507,10 +1507,14 @@ function toggleMode() {
   selectMode = !selectMode;
   mmWrap.classList.toggle('select-mode', selectMode);
   if (selectMode) {
+    // block d3-zoom pan/touch in select mode; wheel (scroll-to-zoom) still works
+    mm.zoom.filter(event => event.type === 'wheel');
     modeBtn.innerHTML = '&#9000; Select Mode';
     modeBtn.title = 'Currently: Select text \u2014 click to switch to Drag/Pan';
     modeBtn.style.outline = '2px solid var(--gold)';
   } else {
+    mm.zoom.filter(event => !event.ctrlKey && !event.button);
+    window.getSelection()?.removeAllRanges();
     modeBtn.innerHTML = '&#x2725; Drag Mode';
     modeBtn.title = 'Currently: Drag/Pan \u2014 click to switch to Select text';
     modeBtn.style.outline = '';
